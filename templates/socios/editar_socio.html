@@ -1,0 +1,22 @@
+{% extends 'socios/base.html' %}
+
+{% block title %}
+Editar Socio - Bank Fega
+{% endblock %}
+
+{% block content %}
+    <h1>Editar Socio</h1>
+    <form method="POST" action="{% url 'editar_socio' socio.id %}">
+        {% csrf_token %}
+        <label for="nombre">Nombres:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ socio.nombre }}" required>
+        <br>
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" value="{{ socio.apellidos }}" required>
+        <br>
+        <label for="cedula">Número de Cédula:</label>
+        <input type="text" id="cedula" name="cedula" value="{{ socio.numero_cuenta }}" required>
+        <br>
+        <button type="submit">Guardar Cambios</button>
+    </form>
+{% endblock %}

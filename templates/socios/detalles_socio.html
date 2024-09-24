@@ -1,0 +1,43 @@
+{% extends 'socios/base.html' %}
+
+{% block title %}
+Detalle de Socio - Bank Fega
+{% endblock %}
+
+{% block content %}
+    <h1>Detalle de Socio</h1>
+
+    <form method="GET" action="{% url 'detalles_socio' %}">
+        <label for="cedula">Buscar socio:</label>
+        <input type="text" id="cedula" name="cedula" placeholder="Ingrese la cédula del socio" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if socio %}
+        <h2>Detalles del Socio</h2>
+        <p><strong>Nombre del socio:</strong> {{ socio.nombre }} {{ socio.apellidos }}</p>
+
+        <p><strong>Historial de pagos:</strong></p>
+        <ul>
+            {% for pago in pagos %}
+                <li>{{ pago.monto }}$ pagado el {{ pago.fecha_pago }}</li>
+            {% empty %}
+                <li>No hay pagos registrados.</li>
+            {% endfor %}
+        </ul>
+
+        <p><strong>Préstamos:</strong> {{ prestamos|length }} préstamo(s)</p>
+        <ul>
+            {% for prestamo in prestamos %}
+                <li>Préstamo de {{ prestamo.cantidad }}$ con saldo de {{ prestamo.saldo_actual }}$</li>
+            {% empty %}
+                <li>No hay préstamos registrados.</li>
+            {% endfor %}
+        </ul>
+
+        <p><strong>Deuda:</strong> {{ deuda_total }}$</p>  <!-- Imprimir la deuda total -->
+        <p><strong>Monto ahorrado:</strong> {{ monto_ahorrado }}$</p>  <!-- Imprimir el monto ahorrado -->
+    {% elif cedula %}
+        <p style="color: red;">No se encontró un socio con la cédula "{{ cedula }}".</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'socios/base.html' %}
+
+{% block title %}
+Reporte Mensual
+{% endblock %}
+
+{% block content %}
+<h1>Reporte Mensual de Ingresos y Egresos</h1>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Mes</th>
+            <th>Ingresos (Aportes)</th>
+            <th>Egresos (Préstamos)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for mes, data in reportes_mensuales.items %}
+        <tr>
+            <td>{{ mes }}</td>
+            <td>{{ data.ingresos }}</td>
+            <td>{{ data.egresos }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <th>Total</th>
+            <th>{{ total_ingresos }}</th>
+            <th>{{ total_egresos }}</th>
+        </tr>
+        <tr>
+            <th>Saldo Actual</th>
+            <th colspan="2">{{ saldo_actual }}</th>
+        </tr>
+    </tfoot>
+</table>
+
+<!-- Botón para guardar el reporte -->
+<form method="POST" action="{% url 'guardar_reporte' %}">
+    {% csrf_token %}
+    <button type="submit">Guardar Reporte</button>
+</form>
+
+{% endblock %}

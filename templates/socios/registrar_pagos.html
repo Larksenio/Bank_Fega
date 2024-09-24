@@ -1,0 +1,100 @@
+{% extends 'socios/base.html' %}
+
+{% block title %}
+Registro de Pagos - Bank Fega
+{% endblock %}
+
+{% block content %}
+<h1>Registro de Pago</h1>
+
+<!-- Formulario para buscar socio por cédula (método GET) -->
+<form method="GET" action="{% url 'buscar_socio' %}">
+    <label for="cedula">Buscar socio:</label>
+    <input type="text" id="cedula" name="cedula" placeholder="Ingrese la cédula del socio" required>
+    <button type="submit">Buscar</button>
+</form>
+
+{% if socio %}
+    <h2>Socio Encontrado</h2>
+    <p><strong>Nombre del socio:</strong> {{ socio.nombre }} {{ socio.apellidos }}</p>
+
+    <!-- Formulario para registrar el pago (método POST) -->
+    <form method="POST" action="{% url 'registrar_pago' %}">
+        {% csrf_token %}
+        <input type="hidden" name="socio_id" value="{{ socio.id }}">
+
+        <label for="tipo_pago">Pago:</label>
+        <select id="tipo_pago" name="tipo_pago" required>
+            <option value="">Seleccione una opción</option>
+            <option value="aporte_mensual">Aporte mensual</option>
+            <option value="pago_prestamo">Pago de préstamo</option>
+        </select>
+        <br>
+
+        <!-- Campo dinámico para el monto, oculto inicialmente -->
+        <div id="monto_container" style="display:none;">
+            <label for="monto">Monto a pagar:</label>
+            <input type="text" id="monto" name="monto" readonly>
+            <br>
+        </div>
+
+        <!-- Campo dinámico para el mes de pago, oculto inicialmente -->
+        <div id="mes_pago_container" style="display:none;">
+            <label for="mes_pago">Mes de pago:</label>
+            <select id="mes_pago" name="mes_pago" required>
+                <option value="Enero">Enero</option>
+                <option value="Febrero">Febrero</option>
+                <option value="Marzo">Marzo</option>
+                <option value="Abril">Abril</option>
+                <option value="Mayo">Mayo</option>
+                <option value="Junio">Junio</option>
+                <option value="Julio">Julio</option>
+                <option value="Agosto">Agosto</option>
+                <option value="Septiembre">Septiembre</option>
+                <option value="Octubre">Octubre</option>
+                <option value="Noviembre">Noviembre</option>
+                <option value="Diciembre">Diciembre</option>
+            </select>
+            <br>
+        </div>
+
+        <button type="submit">Registrar Pago</button>
+    </form>
+
+    <script>
+        document.getElementById('tipo_pago').addEventListener('change', function() {
+    var tipoPago = this.value;
+    var montoContainer = document.getElementById('monto_container');
+    var mesPagoContainer = document.getElementById('mes_pago_container');
+    var montoInput = document.getElementById('monto');
+
+    if (tipoPago === 'aporte_mensual') {
+        montoContainer.style.display = 'block';
+        mesPagoContainer.style.display = 'block';
+        montoInput.value = 20;  // Fijo para el aporte mensual
+    } else if (tipoPago === 'pago_prestamo') {
+        montoContainer.style.display = 'block';
+        mesPagoContainer.style.display = 'none'; // No mostrar el mes para el pago de préstamo
+
+        // Hacer una solicitud al servidor para obtener la próxima cuota del préstamo
+        fetch('{% url "obtener_cuota_prestamo" %}?cedula={{ socio.numero_cuenta }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.monto_cuota) {
+                montoInput.value = data.monto_cuota;  // Muestra la próxima cuota del préstamo
+            } else {
+                alert('No hay cuotas pendientes');
+            }
+        });
+    } else {
+        montoContainer.style.display = 'none';
+        mesPagoContainer.style.display = 'none';
+        montoInput.value = '';  // Limpiar campo si no se selecciona nada
+    }
+});
+    </script>
+
+{% elif cedula %}
+    <p style="color: red;">No se encontró un socio con la cédula "{{ cedula }}".</p>
+{% endif %}
+{% endblock %}

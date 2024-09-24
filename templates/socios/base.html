@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bank Fega{% endblock %}</title>
+    {% load static %}
+     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'lista_socios' %}">Lista de socios</a></li>
+            <li><a href="{% url 'registrar_pagos' %}">Registro de pagos</a></li>
+            <li><a href="{% url 'prestamos' %}">Préstamos</a></li>
+            <li><a href="{% url 'detalles_socio' %}">Detalles de Socio</a></li>
+            <li><a href="{% url 'reportes' %}">Reportes</a></li>
+        </ul>
+    </nav>
+
+    <div class="content">
+        {% block content %}
+        <!-- Aquí va el contenido específico de cada página -->
+        {% endblock %}
+    </div>
+</body>
+</html>

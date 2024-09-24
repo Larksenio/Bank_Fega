@@ -1,0 +1,60 @@
+    {% extends 'socios/base.html' %}
+
+{% block title %}
+Lista de Socios - Bank Fega
+{% endblock %}
+
+{% block content %}
+    <h1>Lista de Socios</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cédula</th>
+                <th>Último mes de aporte</th>
+                <th>Total de aportes</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for socio in socios %}
+                <tr>
+                    <td>{{ socio.nombre }} {{ socio.apellidos }}</td>
+                    <td>{{ socio.numero_cuenta }}</td>
+                    <td>{{ socio.ultimo_mes_aporte|default:"No registrado" }}</td>
+                    <td>{{ socio.total_dinero }}</td>
+                    <td>
+                        <!-- Botón para editar el socio -->
+                        <a href="{% url 'editar_socio' socio.id %}" class="btn btn-primary">Editar</a>
+
+                        <!-- Botón para eliminar el socio -->
+                        <form method="POST" action="{% url 'eliminar_socio' socio.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de que desea eliminar este socio y todos sus registros?')">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button onclick="document.getElementById('nuevo-socio-form').style.display = 'block';">Añadir Nuevo Socio</button>
+
+    <!-- Formulario para agregar nuevo socio, oculto por defecto -->
+    <div id="nuevo-socio-form" style="display: none; margin-top: 20px;">
+        <h2>Registrar Nuevo Socio</h2>
+        <form method="POST" action="{% url 'registrar_socio' %}">
+            {% csrf_token %}
+            <label for="nombre">Nombres:</label>
+            <input type="text" id="nombre" name="nombre" placeholder="Ingrese los nombres" required>
+            <br>
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" placeholder="Ingrese los apellidos" required>
+            <br>
+            <label for="cedula">Número de Cédula:</label>
+            <input type="text" id="cedula" name="cedula" placeholder="Ingrese la cédula" required>
+            <br>
+            <button type="submit">Registrar Socio</button>
+        </form>
+    </div>
+{% endblock %}

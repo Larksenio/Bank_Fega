@@ -1,0 +1,84 @@
+{% extends 'socios/base.html' %}
+
+{% block title %}
+Registro de Préstamo - Bank Fega
+{% endblock %}
+
+{% block content %}
+    <h1>Registro de Préstamo</h1>
+
+    <!-- Formulario para buscar socio por cédula -->
+    <form method="GET" action="{% url 'prestamo' %}">
+        <label for="cedula">Buscar socio:</label>
+        <input type="text" id="cedula" name="cedula" placeholder="Ingrese la cédula del socio" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if socio %}
+        <h2>Socio Encontrado</h2>
+        <p><strong>Nombre del socio:</strong> {{ socio.nombre }} {{ socio.apellidos }}</p>
+
+        <!-- Formulario para registrar el préstamo -->
+        <form method="POST" action="{% url 'registrar_prestamo' %}">
+            {% csrf_token %}
+            <input type="hidden" name="socio_id" value="{{ socio.id }}">
+
+            <label for="monto">Monto del préstamo:</label>
+            <input type="number" id="monto" name="monto" placeholder="Ingrese el monto del préstamo" required>
+            <br>
+
+            <label for="interes">Interés (%):</label>
+            <input type="number" id="interes" name="interes" placeholder="Ingrese el interés" value="5" required>
+            <br>
+
+            <label for="meses">Meses:</label>
+            <input type="number" id="meses" name="meses" placeholder="Ingrese los meses" required>
+            <br>
+
+            <!-- Campo calculado automáticamente para mostrar el valor a pagar mensual -->
+            <label for="valor_mensual">Cuotas a pagar:</label>
+            <div id="detalle_cuotas">
+                <p id="cuotas_detalle">0 cuotas calculadas</p>
+            </div>
+            <br>
+
+            <button type="submit">Registrar préstamo</button>
+        </form>
+
+        <script>
+            function calcularCuotas() {
+                var monto = parseFloat(document.getElementById("monto").value);
+                var interes = parseFloat(document.getElementById("interes").value);
+                var meses = parseInt(document.getElementById("meses").value);
+                var detalleCuotas = '';
+
+                if (!isNaN(monto) && !isNaN(interes) && !isNaN(meses) && meses > 0) {
+                    var saldo = monto;
+                    var totalInteres = 0;
+
+                    detalleCuotas = '<table><tr><th>Mes</th><th>Cuota</th><th>Interés</th><th>Saldo Restante</th></tr>';
+                    
+                    for (var mes = 1; mes <= meses; mes++) {
+                        var interesMes = saldo * (interes / 100);
+                        var cuota = (monto / meses) + interesMes;  // Cuota = capital + interés
+                        saldo -= (monto / meses);  // Reducimos el saldo con el pago del capital
+                        totalInteres += interesMes;
+
+                        detalleCuotas += '<tr><td>' + mes + '</td><td>' + cuota.toFixed(2) + '$</td><td>' + interesMes.toFixed(2) + '$</td><td>' + saldo.toFixed(2) + '$</td></tr>';
+                    }
+
+                    detalleCuotas += '</table>';
+                    document.getElementById("cuotas_detalle").innerHTML = detalleCuotas;
+                }
+            }
+
+            // Ejecutar la función cada vez que cambien los valores de monto, interés o meses
+            document.getElementById("monto").addEventListener("input", calcularCuotas);
+            document.getElementById("interes").addEventListener("input", calcularCuotas);
+            document.getElementById("meses").addEventListener("input", calcularCuotas);
+        </script>
+
+    {% elif cedula %}
+        <p style="color: red;">No se encontró un socio con la cédula "{{ cedula }}".</p>
+    {% endif %}
+{% endblock %}
