@@ -36,19 +36,19 @@ El sistema está enfocado en resolver una necesidad real: reemplazar registros m
 
 En esta vista se puede consultar la información principal del socio, su historial de pagos, préstamos registrados, cuotas y deuda pendiente.
 
-![Detalle de socio](screenshots/detalle-socio.png)
+![Detalle de socio](screenshots/proyecto3.png)
 
 ### Registro de préstamo
 
 Formulario para registrar préstamos, calcular cuotas, intereses y saldo restante.
 
-![Registro de préstamo](screenshots/registro-prestamo.png)
+![Registro de préstamo](screenshots/proyecto3.png)
 
 ### Registro de pago
 
 Vista para registrar pagos de los socios y controlar cuotas pendientes.
 
-![Registro de pago](screenshots/registro-pago.png)
+![Registro de pago](screenshots/proyecto3.png)
 
 ## Instalación y ejecución local
 
